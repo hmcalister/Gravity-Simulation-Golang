@@ -43,7 +43,7 @@ A quadtree is a data structure that splits space into quadrants recursively unti
 
 A quadtree would allow for scaling like O(log(n)) instead of O(n)
 
-### Interactivity
+### Interactivity:
 
 Current interactivity is rather crude, as only the keyboard is used. It would be nice to make some the interactions use the mouse, or even support other devices for true portability.
 
