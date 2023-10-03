@@ -94,8 +94,8 @@ func NewBodyFromStrings(bodyParams []string) *Body {
 // Notice some limits are placed on parameter values (e.g. a max speed and mass)
 func NewRandomBody() *Body {
 	const velocityLimit float64 = 1
-	const massLimit float64 = 10
-	mass := rand.Float64()*massLimit + 1
+
+	mass := 3.0
 	return &Body{
 		x:      rand.Float64()*float64(SCREENWIDTH) - float64(SCREENWIDTH)/2,
 		y:      rand.Float64()*float64(SCREENHEIGHT) - float64(SCREENHEIGHT)/2,
@@ -152,20 +152,7 @@ func (b *Body) Update() *Body {
 
 		// If we are too close (touching) then:
 		if currDistSquared < math.Pow(b.radius+other.radius, 2) {
-			// Merge bodies together!!
-			// Smaller mass gets eaten
-			if newBody.mass < other.mass {
-				return nil
-			}
-
-			// Larger mass gets added to
-			newBody.x = (newBody.x*newBody.mass + other.x*other.mass) / (newBody.mass + other.mass)
-			newBody.y = (newBody.y*newBody.mass + other.y*other.mass) / (newBody.mass + other.mass)
-			newBody.xVel = (newBody.xVel*newBody.mass + other.xVel*other.mass) / (newBody.mass + other.mass)
-			newBody.yVel = (newBody.yVel*newBody.mass + other.yVel*other.mass) / (newBody.mass + other.mass)
-			newBody.radius = massToRadius(newBody.mass + other.mass)
-			newBody.mass = (newBody.mass + other.mass)
-			return &newBody
+			continue
 		}
 
 		acc_magnitude := -1 * G * other.mass / (currDistSquared)

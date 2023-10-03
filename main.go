@@ -6,17 +6,19 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"runtime"
 	"strings"
 	"text/tabwriter"
 	"time"
 	"unsafe"
 
+	"github.com/remeh/sizedwaitgroup"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 const (
-	SCREENWIDTH    = 1200
-	SCREENHEIGHT   = 800
+	SCREENWIDTH    = 3840
+	SCREENHEIGHT   = 2160
 	FRAMETIME      = 16
 	G              = 100
 	PIXELDECAYRATE = 2
@@ -36,9 +38,9 @@ var (
 	currentBodies []*Body
 	nextBodies    []*Body
 	// Variables to do with the simulation behavior
-	paused        bool    = true
+	paused        bool    = false
 	pixeldecay    bool    = false
-	timescale     float64 = 0.25
+	timescale     float64 = 0.01
 	zoomscale     float64 = 1
 	movescale     float64 = 25
 	currentXCoord float64 = 0
@@ -328,11 +330,19 @@ func handleInputs() {
 	}
 }
 
+var wg = sizedwaitgroup.New(runtime.NumCPU() * 100)
+
 // Perform a single timestep across the bodies.
 func timeStep() {
+
 	for i, body := range currentBodies {
-		nextBodies[i] = body.Update()
+		wg.Add()
+		go func(i int, body *Body) {
+			nextBodies[i] = body.Update()
+			wg.Done()
+		}(i, body)
 	}
+	wg.Wait()
 	// To avoid memory being allocated and collected each frame
 	// Simply swap the next (now calculated) array and current array
 	temp := currentBodies
