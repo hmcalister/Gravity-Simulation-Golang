@@ -95,7 +95,7 @@ func NewBodyFromStrings(bodyParams []string) *Body {
 func NewRandomBody() *Body {
 	const velocityLimit float64 = 1
 
-	mass := 3.0
+	mass := float64(MASS)
 	return &Body{
 		x:      rand.Float64()*float64(SCREENWIDTH) - float64(SCREENWIDTH)/2,
 		y:      rand.Float64()*float64(SCREENHEIGHT) - float64(SCREENHEIGHT)/2,
