@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	SCREENWIDTH    = 1280
-	SCREENHEIGHT   = 720
+	SCREENWIDTH    = 512
+	SCREENHEIGHT   = 512
 	MAG            = 1
 	FRAMETIME      = time.Nanosecond * 16666666
 	G              = 100
@@ -42,7 +42,7 @@ var (
 	// Variables to do with the simulation behavior
 	paused        bool    = false
 	pixeldecay    bool    = true
-	timescale     float64 = 0.025
+	timescale     float64 = 0.01
 	zoomscale     float64 = 1
 	movescale     float64 = 25
 	currentXCoord float64 = 0
@@ -55,7 +55,7 @@ var (
 func init() {
 	var helpFlag bool
 	flag.StringVar(&saveFilePath, "saveFile", "", "The path to the save file to use.\nIf not specified, use other flags to determine simulation behavior")
-	flag.IntVar(&numBodies, "numBodies", 1000, "The number of bodies to add to this simulation")
+	flag.IntVar(&numBodies, "numBodies", 1500, "The number of bodies to add to this simulation")
 	flag.BoolVar(&helpFlag, "h", false, "Display help on this program, then quit")
 	flag.Parse()
 
@@ -419,7 +419,7 @@ func main() {
 		since := time.Since(start)
 		left := FRAMETIME - since
 		if left > 0 {
-			fmt.Println(left.String())
+			//fmt.Println(left.String())
 			time.Sleep(left)
 		}
 	}
