@@ -17,11 +17,13 @@ import (
 )
 
 const (
-	SCREENWIDTH    = 3840
-	SCREENHEIGHT   = 2160
-	FRAMETIME      = 16
+	SCREENWIDTH    = 1280
+	SCREENHEIGHT   = 720
+	MAG            = 1
+	FRAMETIME      = time.Nanosecond * 16666666
 	G              = 100
-	PIXELDECAYRATE = 2
+	MASS           = 1
+	PIXELDECAYRATE = 1
 )
 
 var (
@@ -39,8 +41,8 @@ var (
 	nextBodies    []*Body
 	// Variables to do with the simulation behavior
 	paused        bool    = false
-	pixeldecay    bool    = false
-	timescale     float64 = 0.01
+	pixeldecay    bool    = true
+	timescale     float64 = 0.025
 	zoomscale     float64 = 1
 	movescale     float64 = 25
 	currentXCoord float64 = 0
@@ -53,7 +55,7 @@ var (
 func init() {
 	var helpFlag bool
 	flag.StringVar(&saveFilePath, "saveFile", "", "The path to the save file to use.\nIf not specified, use other flags to determine simulation behavior")
-	flag.IntVar(&numBodies, "numBodies", 5, "The number of bodies to add to this simulation")
+	flag.IntVar(&numBodies, "numBodies", 1000, "The number of bodies to add to this simulation")
 	flag.BoolVar(&helpFlag, "h", false, "Display help on this program, then quit")
 	flag.Parse()
 
@@ -359,7 +361,7 @@ func main() {
 	defer sdl.Quit()
 
 	window, err := sdl.CreateWindow("Gravity Simulation", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		SCREENWIDTH, SCREENHEIGHT, sdl.WINDOW_SHOWN)
+		SCREENWIDTH*MAG, SCREENHEIGHT*MAG, sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Println("Failed to create window:", err)
 		return
@@ -382,6 +384,7 @@ func main() {
 
 	// Game loop
 	for {
+		start := time.Now()
 		// At start of each frame, handle any inputs
 		handleInputs()
 
@@ -413,6 +416,11 @@ func main() {
 		renderer.Copy(tex, nil, nil)
 		renderer.Present()
 
-		sdl.Delay(FRAMETIME)
+		since := time.Since(start)
+		left := FRAMETIME - since
+		if left > 0 {
+			fmt.Println(left.String())
+			time.Sleep(left)
+		}
 	}
 }
