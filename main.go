@@ -330,7 +330,7 @@ func handleInputs() {
 	}
 }
 
-var wg = sizedwaitgroup.New(runtime.NumCPU() * 100)
+var wg = sizedwaitgroup.New(runtime.NumCPU())
 
 // Perform a single timestep across the bodies.
 func timeStep() {
